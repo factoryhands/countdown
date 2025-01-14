@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Countdown Widget</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            color: #37352f;
+        }
+
+        .container {
+            background-color: #f7f6f3;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        input[type="datetime-local"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-top: 8px;
+        }
+
+        .countdown {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .countdown-item {
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2eaadc;
+            margin-bottom: 5px;
+        }
+
+        .label {
+            font-size: 14px;
+            color: #787774;
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #37352f;
+        }
+
+        .status-message {
+            text-align: center;
+            margin-top: 15px;
+            color: #787774;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">Countdown Timer</div>
+        <div class="input-group">
+            <label for="target-date">Select target date and time:</label>
+            <input type="datetime-local" id="target-date">
+        </div>
+        <div class="countdown">
+            <div class="countdown-item">
+                <div class="number" id="days">-</div>
+                <div class="label">Days</div>
+            </div>
+            <div class="countdown-item">
+                <div class="number" id="hours">-</div>
+                <div class="label">Hours</div>
+            </div>
+            <div class="countdown-item">
+                <div class="number" id="minutes">-</div>
+                <div class="label">Minutes</div>
+            </div>
+            <div class="countdown-item">
+                <div class="number" id="seconds">-</div>
+                <div class="label">Seconds</div>
+            </div>
+        </div>
+        <div class="status-message" id="status-message">Select a future date and time to start the countdown</div>
+    </div>
+
+    <script>
+        let countdownInterval;
+
+        function updateCountdown() {
+            const targetDate = new Date(document.getElementById('target-date').value);
+            const now = new Date();
+            const statusMessage = document.getElementById('status-message');
+
+            if (isNaN(targetDate.getTime())) {
+                statusMessage.textContent = "Please select a valid date and time";
+                return;
+            }
+
+            const difference = targetDate - now;
+
+            if (difference <= 0) {
+                document.getElementById('days').textContent = '0';
+                document.getElementById('hours').textContent = '0';
+                document.getElementById('minutes').textContent = '0';
+                document.getElementById('seconds').textContent = '0';
+                statusMessage.textContent = "Countdown completed!";
+                return;
+            }
+
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = hours;
+            document.getElementById('minutes').textContent = minutes;
+            document.getElementById('seconds').textContent = seconds;
+            statusMessage.textContent = "Counting down...";
+        }
+
+        document.getElementById('target-date').addEventListener('change', function() {
+            // Clear any existing interval
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            
+            // Run immediately
+            updateCountdown();
+            
+            // Then set up the interval
+            countdownInterval = setInterval(updateCountdown, 1000);
+        });
+    </script>
+</body>
+</html>
